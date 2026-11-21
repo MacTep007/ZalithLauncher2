@@ -231,6 +231,8 @@ fun MainScreen(
                     )
                 }
 
+                UnofficialBadge(Modifier.align(Alignment.BottomEnd))
+
                 TaskMenu(
                     isExpanded = isTaskMenuExpanded,
                     modifier = Modifier
