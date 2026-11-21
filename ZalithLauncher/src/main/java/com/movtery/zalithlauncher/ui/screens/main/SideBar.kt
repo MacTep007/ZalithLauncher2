@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.game.download.addon.platform.Platform
 
 /**
  * Боковая панель навигации MCF Launcher (вместо верхней панели кнопок).
@@ -40,9 +41,11 @@ fun SideBar(
     inVersionsScreen: Boolean,
     inDownloadScreen: Boolean,
     inSettingsScreen: Boolean,
+    activePlatform: Platform?,
     toMainScreen: () -> Unit,
     toVersionsScreen: () -> Unit,
     toDownloadScreen: () -> Unit,
+    toPlatform: (Platform) -> Unit,
     toSettingsScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -68,8 +71,22 @@ fun SideBar(
         SideBarItem(
             icon = R.drawable.ic_download_2_filled,
             text = stringResource(R.string.generic_download),
-            selected = inDownloadScreen,
-            onClick = { if (!inDownloadScreen) toDownloadScreen() }
+            selected = inDownloadScreen && activePlatform == null,
+            onClick = { if (!(inDownloadScreen && activePlatform == null)) toDownloadScreen() }
+        )
+        SideBarItem(
+            icon = R.drawable.img_platform_curseforge,
+            text = "CurseForge",
+            selected = activePlatform == Platform.CURSEFORGE,
+            colorIcon = true,
+            onClick = { toPlatform(Platform.CURSEFORGE) }
+        )
+        SideBarItem(
+            icon = R.drawable.img_platform_modrinth,
+            text = "Modrinth",
+            selected = activePlatform == Platform.MODRINTH,
+            colorIcon = true,
+            onClick = { toPlatform(Platform.MODRINTH) }
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -89,6 +106,7 @@ private fun SideBarItem(
     @DrawableRes icon: Int,
     text: String,
     selected: Boolean,
+    colorIcon: Boolean = false,
     onClick: () -> Unit
 ) {
     val container = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
@@ -109,7 +127,7 @@ private fun SideBarItem(
             modifier = Modifier.size(22.dp),
             painter = painterResource(icon),
             contentDescription = null,
-            tint = content
+            tint = if (colorIcon) Color.Unspecified else content
         )
         Text(
             text = text,

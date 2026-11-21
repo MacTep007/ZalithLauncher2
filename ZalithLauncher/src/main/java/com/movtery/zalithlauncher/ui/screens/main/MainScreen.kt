@@ -57,6 +57,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import com.movtery.zalithlauncher.game.download.addon.platform.Platform
+import com.movtery.zalithlauncher.setting.MiscSettings
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -158,6 +163,33 @@ fun MainScreen(
     val mainScreenKey = screenBackStackModel.mainScreen.currentKey
     val inLauncherScreen = mainScreenKey == null || mainScreenKey is NormalNavKey.LauncherMain
 
+    val scope = rememberCoroutineScope()
+
+    //какой раздел загрузок открыт: если это моды/сборки/ресурсы/шейдеры/миры, подсвечиваем платформу
+    val downloadSub = (mainScreenKey as? NestedNavKey.Download)?.currentKey
+    val inAddonArea = downloadSub is NestedNavKey.DownloadMod ||
+            downloadSub is NestedNavKey.DownloadModPack ||
+            downloadSub is NestedNavKey.DownloadResourcePack ||
+            downloadSub is NestedNavKey.DownloadShaders ||
+            downloadSub is NestedNavKey.DownloadSaves
+    val activePlatform: Platform? = if (inAddonArea) MiscSettings.searchModPlatform.state else null
+
+    /** Открыть каталог модов на выбранной платформе */
+    val openPlatform: (Platform) -> Unit = { platform ->
+        MiscSettings.searchModPlatform.save(platform)
+        MiscSettings.searchModpackPlatform.save(platform)
+        MiscSettings.searchResourcePackPlatform.save(platform)
+        MiscSettings.searchShadersPlatform.save(platform)
+        scope.launch {
+            if (mainScreenKey is NestedNavKey.Download) {
+                //сначала сбрасываем экран, чтобы он перечитал выбранную платформу
+                screenBackStackModel.navigateToDownload(screenBackStackModel.downloadGameScreen)
+                delay(150)
+            }
+            screenBackStackModel.navigateToDownload(screenBackStackModel.downloadModScreen)
+        }
+    }
+
     val isBackgroundValid = LocalBackgroundViewModel.current?.isValid == true
     val launcherBackgroundOpacity = LauncherSettings.launcherBackgroundOpacity.state.toFloat() / 100f
 
@@ -176,6 +208,7 @@ fun MainScreen(
             inVersionsScreen = mainScreenKey is NormalNavKey.VersionsManager,
             inDownloadScreen = mainScreenKey is NestedNavKey.Download,
             inSettingsScreen = mainScreenKey is NestedNavKey.Settings,
+            activePlatform = activePlatform,
             toMainScreen = toMainScreen,
             toVersionsScreen = {
                 screenBackStackModel.mainScreen.removeAndNavigateTo(
@@ -186,6 +219,7 @@ fun MainScreen(
             toDownloadScreen = {
                 screenBackStackModel.navigateToDownload()
             },
+            toPlatform = openPlatform,
             toSettingsScreen = {
                 screenBackStackModel.mainScreen.removeAndNavigateTo(
                     removes = screenBackStackModel.clearBeforeNavKeys,
