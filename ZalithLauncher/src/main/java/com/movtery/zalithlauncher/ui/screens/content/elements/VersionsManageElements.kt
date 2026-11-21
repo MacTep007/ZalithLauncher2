@@ -18,6 +18,10 @@
 
 package com.movtery.zalithlauncher.ui.screens.content.elements
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import java.util.Locale
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
@@ -687,7 +691,8 @@ fun VersionItemLayout(
     onCopyClick: () -> Unit = {},
     onExportClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
-    onPinned: () -> Unit = {}
+    onPinned: () -> Unit = {},
+    onLaunch: () -> Unit = {}
 ) {
     val scale = remember { Animatable(initialValue = 0.95f) }
     LaunchedEffect(Unit) {
@@ -698,6 +703,7 @@ fun VersionItemLayout(
         color = color,
         contentColor = contentColor,
         shape = MaterialTheme.shapes.large,
+        border = if (selected) BorderStroke(2.dp, Color(0xFF2E7D32)) else null,
         onClick = {
             if (selected) return@Surface
             onSelected()
@@ -708,20 +714,27 @@ fun VersionItemLayout(
                 .fillMaxWidth()
                 .clip(shape = MaterialTheme.shapes.large)
                 .backgroundGlass(blur, color, influencedByBackground)
-                .padding(all = 4.dp),
+                .padding(start = 8.dp, top = 4.dp, end = 4.dp, bottom = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            RadioButton(
-                selected = selected,
-                onClick = {
-                    if (selected) return@RadioButton
-                    onSelected()
-                }
-            )
             CommonVersionInfoLayout(
                 modifier = Modifier.weight(1f),
                 version = version
             )
+
+            if (version.isValid()) {
+                Button(
+                    onClick = onLaunch,
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF2E7D32),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                ) {
+                    Text(text = if (Locale.getDefault().language == "ru") "Играть" else "Play")
+                }
+            }
 
             IconButton(
                 onClick = {
