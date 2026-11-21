@@ -322,6 +322,10 @@ fun VersionsManageScreen(
                 },
                 onInstall = {
                     backScreenViewModel.navigateToDownload()
+                },
+                onLaunchGame = { version ->
+                    VersionsManager.saveVersion(version)
+                    eventViewModel.sendEvent(EventViewModel.Event.Launch.Game(version))
                 }
             )
 
@@ -462,6 +466,7 @@ private fun VersionsLayout(
     onRefresh: () -> Unit,
     onVersionPinned: () -> Unit,
     onInstall: () -> Unit,
+    onLaunchGame: (Version) -> Unit,
 ) {
     val ctx = rememberAnimatedContext(isVisible = isVisible)
 
@@ -569,7 +574,8 @@ private fun VersionsLayout(
                                 onCopyClick = { versionsOperation = VersionsOperation.Copy(version) },
                                 onExportClick = { navigateToExport(version) },
                                 onDeleteClick = { versionsOperation = VersionsOperation.Delete(version) },
-                                onPinned = onVersionPinned
+                                onPinned = onVersionPinned,
+                                onLaunch = { onLaunchGame(version) }
                             )
                         }
                     }
