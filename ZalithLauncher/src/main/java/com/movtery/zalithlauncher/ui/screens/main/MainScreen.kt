@@ -170,9 +170,33 @@ fun MainScreen(
         color = backgroundColor,
         contentColor = onBackgroundColor()
     ) {
+        Row(modifier = Modifier.fillMaxSize()) {
+        SideBar(
+            inLauncherScreen = inLauncherScreen,
+            inVersionsScreen = mainScreenKey is NormalNavKey.VersionsManager,
+            inDownloadScreen = mainScreenKey is NestedNavKey.Download,
+            inSettingsScreen = mainScreenKey is NestedNavKey.Settings,
+            toMainScreen = toMainScreen,
+            toVersionsScreen = {
+                screenBackStackModel.mainScreen.removeAndNavigateTo(
+                    removes = screenBackStackModel.clearBeforeNavKeys,
+                    screenKey = NormalNavKey.VersionsManager
+                )
+            },
+            toDownloadScreen = {
+                screenBackStackModel.navigateToDownload()
+            },
+            toSettingsScreen = {
+                screenBackStackModel.mainScreen.removeAndNavigateTo(
+                    removes = screenBackStackModel.clearBeforeNavKeys,
+                    screenKey = screenBackStackModel.settingsScreen
+                )
+            }
+        )
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxHeight()
+                .weight(1f)
         ) {
             TopBar(
                 modifier = Modifier
@@ -231,8 +255,6 @@ fun MainScreen(
                     )
                 }
 
-                UnofficialBadge(Modifier.align(Alignment.BottomEnd))
-
                 TaskMenu(
                     isExpanded = isTaskMenuExpanded,
                     modifier = Modifier
@@ -244,6 +266,7 @@ fun MainScreen(
                     changeTasksExpandedState()
                 }
             }
+        }
         }
     }
 }
@@ -428,23 +451,6 @@ private fun <E: TitledNavKey> TopBar(
                     },
                 )
 
-                TopBarRailItem(
-                    selected = inDownloadScreen,
-                    painter = painterResource(R.drawable.ic_download_2_filled),
-                    text = stringResource(R.string.generic_download),
-                    onClick = {
-                        if (!inDownloadScreen) toDownloadScreen()
-                    },
-                )
-
-                TopBarRailItem(
-                    selected = inSettingsScreen,
-                    painter = painterResource(R.drawable.ic_settings_filled),
-                    text = stringResource(R.string.generic_setting),
-                    onClick = {
-                        if (!inSettingsScreen) toSettingsScreen()
-                    },
-                )
             }
         }
     }
