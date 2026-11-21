@@ -5,6 +5,7 @@
 
 package com.movtery.zalithlauncher.ui.screens.main
 
+import java.util.Locale
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -64,7 +65,7 @@ fun SideBar(
         )
         SideBarItem(
             icon = R.drawable.ic_build_filled,
-            text = stringResource(R.string.page_title_version_list),
+            text = if (Locale.getDefault().language == "ru") "Установки" else stringResource(R.string.page_title_version_list),
             selected = inVersionsScreen,
             onClick = { if (!inVersionsScreen) toVersionsScreen() }
         )
