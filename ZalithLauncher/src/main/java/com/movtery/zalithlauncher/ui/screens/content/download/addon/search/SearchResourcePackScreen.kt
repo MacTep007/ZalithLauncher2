@@ -37,9 +37,8 @@ fun SearchResourcePackScreen(
     downloadResourcePackScreenCurrentKey: TitledNavKey?,
     swapToDownload: (Platform, projectId: String, iconUrl: String?) -> Unit = { _, _, _ -> }
 ) {
-    val initialPlatform = remember {
-        MiscSettings.searchResourcePackPlatform.getValue()
-    }
+    //реактивное значение: платформа может меняться из боковой панели
+    val initialPlatform = MiscSettings.searchResourcePackPlatform.state
     SearchAddonScreen(
         mainScreenKey = mainScreenKey,
         parentScreenKey = downloadResourcePackScreenKey,

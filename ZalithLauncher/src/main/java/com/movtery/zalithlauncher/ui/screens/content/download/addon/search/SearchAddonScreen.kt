@@ -18,6 +18,7 @@
 
 package com.movtery.zalithlauncher.ui.screens.content.download.addon.search
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -279,6 +280,16 @@ fun SearchAddonScreen(
         initialPlatform = initialPlatform,
         platformClasses = platformClasses
     )
+
+    //синхронизация с платформой, выбранной вне экрана (например, в боковой панели)
+    LaunchedEffect(initialPlatform) {
+        if (viewModel.searchPlatform != initialPlatform) {
+            viewModel.searchPlatform = initialPlatform
+            viewModel.researchWithFilter(
+                viewModel.searchFilter.copy(categories = emptyList(), modloader = null)
+            )
+        }
+    }
 
     //跟随平台自动变更的内容
     val categories = remember(viewModel.searchPlatform) {

@@ -93,9 +93,8 @@ fun SearchModPackScreen(
     eventViewModel: EventViewModel,
     swapToDownload: (Platform, projectId: String, iconUrl: String?) -> Unit = { _, _, _ -> }
 ) {
-    val initialPlatform = remember {
-        MiscSettings.searchModpackPlatform.getValue()
-    }
+    //реактивное значение: платформа может меняться из боковой панели
+    val initialPlatform = MiscSettings.searchModpackPlatform.state
 
     val context = LocalContext.current
     val modpackViewModel = rememberModpackViewModel()

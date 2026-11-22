@@ -42,9 +42,8 @@ fun SearchModScreen(
     installedInfo: ((Platform, projectId: String) -> InstalledMod?)? = null,
     swapToDownload: (Platform, projectId: String, iconUrl: String?) -> Unit = { _, _, _ -> }
 ) {
-    val initialPlatform = remember {
-        MiscSettings.searchModPlatform.getValue()
-    }
+    //реактивное значение: платформа может меняться из боковой панели
+    val initialPlatform = MiscSettings.searchModPlatform.state
     SearchAddonScreen(
         mainScreenKey = mainScreenKey,
         parentScreenKey = downloadModScreenKey,

@@ -37,9 +37,8 @@ fun SearchShadersScreen(
     downloadShadersScreenCurrentKey: TitledNavKey?,
     swapToDownload: (Platform, projectId: String, iconUrl: String?) -> Unit = { _, _, _ -> }
 ) {
-    val initialPlatform = remember {
-        MiscSettings.searchShadersPlatform.getValue()
-    }
+    //реактивное значение: платформа может меняться из боковой панели
+    val initialPlatform = MiscSettings.searchShadersPlatform.state
     SearchAddonScreen(
         mainScreenKey = mainScreenKey,
         parentScreenKey = downloadShadersScreenKey,
