@@ -53,6 +53,11 @@ interface PlatformSearchData {
     fun platformIconUrl(): String?
 
     /**
+     * Баннер (скриншот) проекта, если он есть
+     */
+    fun platformBannerUrl(): String? = null
+
+    /**
      * 在平台上的下载数量
      */
     fun platformDownloadCount(): Long
