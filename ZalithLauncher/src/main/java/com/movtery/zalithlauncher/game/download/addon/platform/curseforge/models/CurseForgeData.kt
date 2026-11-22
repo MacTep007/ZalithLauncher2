@@ -337,6 +337,8 @@ class CurseForgeData(
 
     override fun platformIconUrl(): String? = logo?.url
 
+    override fun platformBannerUrl(): String? = screenshots.firstOrNull()?.url
+
     override fun platformDownloadCount(): Long = downloadCount
 
     override fun platformFollows(): Long? = null
