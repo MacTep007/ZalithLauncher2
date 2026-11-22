@@ -399,6 +399,7 @@ private fun ResultList(
             val title = remember(item) { item.platformTitle() }
             val description = remember(item) { item.platformDescription() }
             val iconUrl = remember(item) { item.platformIconUrl() }
+            val bannerUrl = remember(item) { item.platformBannerUrl() }
             val authors = remember(item) { item.platformAuthors() }
             val downloads = remember(item) { item.platformDownloadCount() }
             val modloaders = remember(item) { item.platformModLoaders() }
@@ -414,6 +415,7 @@ private fun ResultList(
                 title = mcmod.getMcmodTitle(title, context),
                 description = description,
                 iconUrl = iconUrl,
+                bannerUrl = bannerUrl,
                 authors = authors,
                 downloads = downloads,
                 modloaders = modloaders,

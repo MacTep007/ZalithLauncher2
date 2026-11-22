@@ -5,6 +5,18 @@
 
 package com.movtery.zalithlauncher.ui.screens.content.download.addon.elements
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,6 +62,7 @@ fun ResultProjectCard(
     title: String,
     description: String,
     iconUrl: String? = null,
+    bannerUrl: String? = null,
     authors: List<String>? = null,
     downloads: Long = 0L,
     modloaders: List<PlatformDisplayLabel>? = null,
@@ -59,11 +72,23 @@ fun ResultProjectCard(
     val context = LocalContext.current
     val soft = Color(0xFFE0E0E0)
 
+    //лёгкое «нажатие» карточки
+    val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val pressScale by animateFloatAsState(if (pressed) 0.97f else 1f, label = "cardPress")
+
     Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
+        modifier = modifier.graphicsLayer {
+            scaleX = pressScale
+            scaleY = pressScale
+        },
+        shape = RoundedCornerShape(18.dp),
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
         contentColor = MaterialTheme.colorScheme.onSurface,
+        tonalElevation = 3.dp,
+        shadowElevation = 8.dp,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+        interactionSource = interactionSource,
         onClick = onClick
     ) {
         Column {
@@ -71,7 +96,7 @@ fun ResultProjectCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(96.dp)
+                    .height(120.dp)
                     .clipToBounds()
             ) {
                 AddonIcon(
@@ -81,12 +106,24 @@ fun ResultProjectCard(
                     size = 280.dp,
                     iconUrl = iconUrl
                 )
+                //настоящий баннер (скриншот), если он есть
+                if (!bannerUrl.isNullOrBlank()) {
+                    AsyncImage(
+                        modifier = Modifier.matchParentSize(),
+                        model = ImageRequest.Builder(context)
+                            .data(bannerUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop
+                    )
+                }
                 Box(
                     modifier = Modifier
                         .matchParentSize()
                         .background(
                             Brush.verticalGradient(
-                                listOf(Color(0x40000000), Color(0xCC000000))
+                                listOf(Color(0x14000000), Color(0xE6000000))
                             )
                         )
                 )
@@ -126,6 +163,7 @@ fun ResultProjectCard(
                             text = title,
                             color = Color.White,
                             style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
