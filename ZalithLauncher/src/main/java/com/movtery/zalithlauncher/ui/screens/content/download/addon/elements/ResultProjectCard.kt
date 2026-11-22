@@ -85,8 +85,8 @@ fun ResultProjectCard(
         shape = RoundedCornerShape(18.dp),
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
         contentColor = MaterialTheme.colorScheme.onSurface,
-        tonalElevation = 3.dp,
-        shadowElevation = 8.dp,
+        tonalElevation = 1.dp,
+        shadowElevation = 2.dp,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
         interactionSource = interactionSource,
         onClick = onClick
@@ -99,12 +99,15 @@ fun ResultProjectCard(
                     .height(120.dp)
                     .clipToBounds()
             ) {
-                AddonIcon(
+                //лёгкий фон вместо размытой иконки (размытие сильно грузило видеочип)
+                Box(
                     modifier = Modifier
-                        .align(Alignment.Center)
-                        .blur(24.dp),
-                    size = 280.dp,
-                    iconUrl = iconUrl
+                        .matchParentSize()
+                        .background(
+                            Brush.linearGradient(
+                                listOf(Color(0xFF2E333B), Color(0xFF1A1C20))
+                            )
+                        )
                 )
                 //настоящий баннер (скриншот), если он есть
                 if (!bannerUrl.isNullOrBlank()) {
