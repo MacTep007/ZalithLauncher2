@@ -181,14 +181,7 @@ fun MainScreen(
         MiscSettings.searchModpackPlatform.save(platform)
         MiscSettings.searchResourcePackPlatform.save(platform)
         MiscSettings.searchShadersPlatform.save(platform)
-        scope.launch {
-            if (mainScreenKey is NestedNavKey.Download) {
-                //сначала сбрасываем экран, чтобы он перечитал выбранную платформу
-                screenBackStackModel.navigateToDownload(screenBackStackModel.downloadGameScreen)
-                delay(150)
-            }
-            screenBackStackModel.navigateToDownload(screenBackStackModel.downloadModScreen)
-        }
+        screenBackStackModel.navigateToDownload(screenBackStackModel.downloadModScreen)
     }
 
     val isBackgroundValid = LocalBackgroundViewModel.current?.isValid == true
