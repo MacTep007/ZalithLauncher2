@@ -215,6 +215,8 @@ class ModrinthSearchResult(
 
         override fun platformIconUrl(): String? = iconUrl
 
+        override fun platformBannerUrl(): String? = featuredGallery ?: gallery?.firstOrNull()
+
         override fun platformDownloadCount(): Long = downloads
 
         override fun platformFollows(): Long = follows
