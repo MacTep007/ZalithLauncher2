@@ -18,6 +18,11 @@
 
 package com.movtery.zalithlauncher.ui.screens.content.download.addon.elements
 
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
@@ -150,7 +155,7 @@ fun ResultListLayout(
             is SearchAddonState.Success -> {
                 val page = searchState.page
 
-                val listState = rememberLazyListState()
+                val listState = rememberLazyGridState()
                 val maxCollapsePx = with(LocalDensity.current) { controllerHeight.toPx() }
 
                 //计算缩放比例，滑动偏移限制在0 ~ maxCollapsePx之间
@@ -373,7 +378,7 @@ private fun PageController(
 @Composable
 private fun ResultList(
     modifier: Modifier = Modifier,
-    state: LazyListState = rememberLazyListState(),
+    state: LazyGridState = rememberLazyGridState(),
     contentPadding: PaddingValues = PaddingValues(),
     classes: PlatformClasses,
     data: List<Pair<PlatformSearchData, AddonProjectInfo?>>,
@@ -381,10 +386,13 @@ private fun ResultList(
     installedInfo: ((Platform, projectId: String) -> InstalledMod?)? = null
 ) {
     val context = LocalContext.current
-    LazyColumn(
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 200.dp),
         modifier = modifier,
         state = state,
-        contentPadding = contentPadding
+        contentPadding = contentPadding,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(data) { (item, mcmod) ->
             val platform = remember(item) { item.platform() }
@@ -400,10 +408,8 @@ private fun ResultList(
             val isInstalled = installedInfo?.invoke(platform, item.platformId()) != null
 //            val isFavorite = FavoriteProjectsRepository.isFavorite(platform, item.platformId())
 
-            ResultProjectLayout(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 6.dp),
+            ResultProjectCard(
+                modifier = Modifier.fillMaxWidth(),
                 platform = platform,
                 title = mcmod.getMcmodTitle(title, context),
                 description = description,
@@ -411,8 +417,6 @@ private fun ResultList(
                 authors = authors,
                 downloads = downloads,
                 modloaders = modloaders,
-                categories = categories?.sortedWith { o1, o2 -> o1.index() - o2.index() },
-                followsCount = followsCount,
                 isInstalled = isInstalled,
 //                isFavorite = isFavorite,
 //                onFavoriteClick = {

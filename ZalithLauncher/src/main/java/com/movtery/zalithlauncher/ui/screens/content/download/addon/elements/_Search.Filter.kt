@@ -127,6 +127,7 @@ fun SearchFilter(
     modloaders: List<PlatformDisplayLabel> = emptyList(),
     modloader: PlatformDisplayLabel? = null,
     onModLoaderChange: (PlatformDisplayLabel?) -> Unit = {},
+    showAdvanced: Boolean = false,
     extraFilter: (LazyListScope.() -> Unit)? = null
 ) {
     LazyColumn(
@@ -187,7 +188,7 @@ fun SearchFilter(
 
         extraFilter?.invoke(this@LazyColumn)
 
-        if (enablePlatform) {
+        if (showAdvanced && enablePlatform) {
             item {
                 PlatformListLayout(
                     modifier = Modifier.fillMaxWidth(),
@@ -197,7 +198,7 @@ fun SearchFilter(
             }
         }
 
-        item {
+        if (showAdvanced) item {
             FilterListLayout(
                 modifier = Modifier.fillMaxWidth(),
                 items = PlatformSortField.entries,
@@ -216,7 +217,7 @@ fun SearchFilter(
             )
         }
 
-        item {
+        if (showAdvanced) item {
             FilterListLayout(
                 modifier = Modifier.fillMaxWidth(),
                 items = allCategories,
@@ -234,7 +235,7 @@ fun SearchFilter(
             )
         }
 
-        if (enableModLoader) {
+        if (showAdvanced && enableModLoader) {
             item {
                 FilterListLayout(
                     modifier = Modifier.fillMaxWidth(),
