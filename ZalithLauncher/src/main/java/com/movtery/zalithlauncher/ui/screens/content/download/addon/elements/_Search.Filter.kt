@@ -18,6 +18,9 @@
 
 package com.movtery.zalithlauncher.ui.screens.content.download.addon.elements
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -257,6 +260,83 @@ fun SearchFilter(
 }
 
 
+
+/**
+ * Верхняя панель поиска: поле «Поиск по имени», поле «Версия игры» и дополнительные кнопки.
+ */
+@Composable
+fun SearchTopBar(
+    modifier: Modifier = Modifier,
+    searchName: String,
+    onSearchNameChange: (String) -> Unit = {},
+    onSearch: () -> Unit,
+    searchedMcMods: List<AddonProjectInfo>,
+    searchedVersions: List<String>,
+    gameVersion: String,
+    onGameVersionChange: (String) -> Unit = {},
+    extraFilter: (LazyListScope.() -> Unit)? = null
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Box(modifier = Modifier.weight(3f)) {
+            SuggestionsText(
+                value = searchName,
+                onValueChange = onSearchNameChange,
+                label = stringResource(R.string.download_addon_filter_search_name),
+                onSearch = onSearch,
+                suggestions = searchedMcMods,
+                suggestionLabel = { item ->
+                    Text(
+                        item.mainName(),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                    if (item.subName().isNotBlank()) {
+                        Text(
+                            modifier = Modifier.alpha(0.7f),
+                            text = item.subName(),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                },
+                onSuggestionClick = { item ->
+                    onSearchNameChange(
+                        item.subName().ifEmpty { item.abbrName() }
+                    )
+                    onSearch()
+                }
+            )
+        }
+
+        Box(modifier = Modifier.weight(1.5f)) {
+            SuggestionsText(
+                value = gameVersion,
+                onValueChange = onGameVersionChange,
+                label = stringResource(R.string.download_addon_filter_game_version),
+                onSearch = onSearch,
+                suggestions = searchedVersions,
+                suggestionLabel = { item ->
+                    Text(
+                        text = item,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                },
+                onSuggestionClick = { item ->
+                    onGameVersionChange(item)
+                    onSearch()
+                }
+            )
+        }
+
+        extraFilter?.let { extra ->
+            LazyRow(modifier = Modifier.widthIn(max = 240.dp)) {
+                extra(this)
+            }
+        }
+    }
+}
 
 enum class FilterSelectionMode {
     /**
